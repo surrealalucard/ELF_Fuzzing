@@ -22,19 +22,19 @@ def compare(fn1, fn2):
         return f1.read()==f2.read()
 
 def check_output():
-    run("./license_2 AAAA-Z10N-42-OK > orig_output")
-    run("./license_2_fuzz AAAA-Z10N-42-OK > fuzz_output")
-    return compare("orig_output", "fuzz_output")
+    run("./license_2 AAAA-Z10N-42-OK > tmp/orig_output")
+    run("./license_2_fuzz AAAA-Z10N-42-OK > tmp/fuzz_output")
+    return compare("tmp/orig_output", "tmp/fuzz_output")
 
 def check_gdb():
-    run("echo disassemble main | gdb license_2 > orig_gdb")
-    run("echo disassemble main | gdb license_2_fuzz > fuzz_gdb")
-    return compare("orig_gdb", "fuzz_gdb")
+    run("echo disassemble main | gdb license_2 > tmp/orig_gdb")
+    run("echo disassemble main | gdb license_2_fuzz > tmp/fuzz_gdb")
+    return compare("tmp/orig_gdb", "tmp/fuzz_gdb")
 
 def check_radare():
-    run('echo -e "aaa\ns sym.main\npdf\nquit" | radare2 license_2 > orig_radare')
-    run('echo -e "aaa\ns sym.main\npdf\nquit" | radare2 license_2_fuzz > fuzz_radare')
-    return compare("orig_radare", "fuzz_radare")
+    run('echo -e "aaa\ns sym.main\npdf\nquit" | radare2 license_2 > tmp/orig_radare')
+    run('echo -e "aaa\ns sym.main\npdf\nquit" | radare2 license_2_fuzz > tmp/fuzz_radare')
+    return compare("tmp/orig_radare", "tmp/fuzz_radare")
 
 run("cp license_2 license_2_fuzz")
 
@@ -42,6 +42,6 @@ while True:
     copy_binary()
     if check_output and not check_gdb() and not check_radare():
         print("FOUND POSSIBLE FAIL\n\n\n")
-        run("tail fuzz_gdb")
-        run("tail fuzz_radare")
-        raw_input()
+        run("tail tmp/fuzz_gdb")
+        run("tail tmp/fuzz_radare")
+        input()
